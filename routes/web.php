@@ -3,9 +3,10 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\LibrarianController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\BorrowController;
-use App\Http\Controllers\LibrarianController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CategoryController;
 
@@ -51,4 +52,12 @@ Route::middleware(['auth', 'role:librarian'])->group(function () {
         'update' => 'librarian.categories.update',
         'destroy' => 'librarian.categories.destroy',
     ]);
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
+    Route::get('/admin/users', [AdminController::class, 'index'])->name('admin.users.index');
+    Route::get('/admin/users/{user}/edit', [AdminController::class, 'edit'])->name('admin.users.edit');
+    Route::put('/admin/users/{user}', [AdminController::class, 'update'])->name('admin.users.update');
+    Route::delete('/admin/users/{user}', [AdminController::class, 'destroy'])->name('admin.users.destroy');
+});
 });

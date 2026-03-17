@@ -9,23 +9,38 @@
 <body class="bg-gray-50">
 
     <nav class="bg-white shadow-sm sticky top-0 z-10 mb-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center">
-                    <span class="text-2xl font-extrabold text-indigo-600 tracking-tight">ALPUS</span>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between h-16 items-center">
+            <div class="flex items-center gap-4">
+                <span class="text-2xl font-extrabold text-indigo-600 tracking-tight">E-LIB</span>
+                
+                {{-- Tombol Khusus Admin agar bisa balik ke dashboard utama --}}
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.dashboard') }}" class="ml-2 bg-red-600 hover:bg-red-700 text-white text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider transition-all">
+                        Admin Mode
+                    </a>
+                @endif
+            </div>
+
+            <div class="flex items-center gap-6">
+                <a href="{{ route('user.dashboard') }}" class="text-sm font-medium {{ request()->routeIs('user.dashboard') ? 'text-indigo-600' : 'text-gray-500 hover:text-indigo-600' }}">Katalog</a>
+                <a href="{{ route('user.history') }}" class="text-sm font-medium {{ request()->routeIs('user.history') ? 'text-indigo-600' : 'text-gray-500 hover:text-indigo-600' }}">Riwayat</a>
+                
+                <div class="h-6 w-px bg-gray-200"></div>
+                
+                <div class="flex flex-col text-right">
+                    <span class="text-sm text-gray-800 font-bold leading-none">{{ auth()->user()->name }}</span>
+                    <span class="text-[10px] text-gray-400 uppercase tracking-tighter">{{ auth()->user()->role }}</span>
                 </div>
-                <div class="flex items-center gap-6">
-                    <a href="{{ route('user.dashboard') }}" class="text-sm font-medium text-gray-500 hover:text-indigo-600">Katalog</a>
-                    <a href="{{ route('user.history') }}" class="text-sm font-bold text-indigo-600 border-b-2 border-indigo-600">Riwayat</a>
-                    <div class="h-6 w-px bg-gray-200"></div>
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="text-sm font-bold text-red-500 hover:text-red-700">Keluar</button>
-                    </form>
-                </div>
+
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="text-sm font-bold text-red-500 hover:text-red-700 transition">Keluar</button>
+                </form>
             </div>
         </div>
-    </nav>
+    </div>
+</nav>
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="mb-8">

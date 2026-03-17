@@ -10,15 +10,27 @@
     <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
         <div class="flex gap-6 items-center">
             <span class="font-bold text-xl tracking-wider mr-4">ALPUS LIBRARIAN</span>
-            <a href="{{ route('librarian.dashboard') }}" class="text-sm opacity-80 hover:opacity-100 py-2">Persetujuan</a>
-            <a href="{{ route('librarian.returns') }}" class="text-sm font-bold border-b-2 border-white py-2">Pengembalian</a>
-            <a href="{{ route('librarian.books.index') }}" class="text-sm opacity-80 hover:opacity-100 py-2">Kelola Buku</a>
-            <a href="{{ route('librarian.categories.index') }}" class="text-sm opacity-80 hover:opacity-100 py-2">Kategori</a>
+            
+            {{-- Tombol Khusus Admin --}}
+            @if(auth()->user()->role === 'admin')
+                <a href="{{ route('admin.dashboard') }}" class="bg-red-600 hover:bg-red-700 text-white text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider transition-all shadow-sm">
+                    Kembali ke Admin
+                </a>
+            @endif
+
+            <a href="{{ route('librarian.dashboard') }}" class="text-sm {{ request()->routeIs('librarian.dashboard') ? 'font-bold border-b-2 border-white' : 'opacity-80 hover:opacity-100' }} py-2">Persetujuan</a>
+            <a href="{{ route('librarian.returns') }}" class="text-sm {{ request()->routeIs('librarian.returns') ? 'font-bold border-b-2 border-white' : 'opacity-80 hover:opacity-100' }} py-2">Pengembalian</a>
+            <a href="{{ route('librarian.books.index') }}" class="text-sm {{ request()->routeIs('librarian.books.*') ? 'font-bold border-b-2 border-white' : 'opacity-80 hover:opacity-100' }} py-2">Kelola Buku</a>
+            <a href="{{ route('librarian.categories.index') }}" class="text-sm {{ request()->routeIs('librarian.categories.*') ? 'font-bold border-b-2 border-white' : 'opacity-80 hover:opacity-100' }} py-2">Kategori</a>
         </div>
-        <form action="{{ route('logout') }}" method="POST">
-            @csrf
-            <button type="submit" class="text-sm bg-indigo-800 px-4 py-2 rounded">Logout</button>
-        </form>
+        
+        <div class="flex items-center gap-4">
+            <span class="text-xs italic opacity-70">{{ auth()->user()->name }} ({{ auth()->user()->role }})</span>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="text-sm bg-indigo-800 px-4 py-2 rounded hover:bg-red-600 transition">Logout</button>
+            </form>
+        </div>
     </div>
 </nav>
 
