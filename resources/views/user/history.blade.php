@@ -1,98 +1,81 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Riwayat Pinjam - ALPUS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50">
+@extends('layouts.user')
 
-    <nav class="bg-white shadow-sm sticky top-0 z-10 mb-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
-            <div class="flex items-center gap-4">
-                <span class="text-2xl font-extrabold text-indigo-600 tracking-tight">ALPUS</span>
-                
-                {{-- Tombol Khusus Admin agar bisa balik ke dashboard utama --}}
-                @if(auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="ml-2 bg-red-600 hover:bg-red-700 text-white text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider transition-all">
-                        Admin Mode
-                    </a>
-                @endif
-            </div>
+@section('title', 'Riwayat Pinjam')
 
-            <div class="flex items-center gap-6">
-                <a href="{{ route('user.dashboard') }}" class="text-sm font-medium {{ request()->routeIs('user.dashboard') ? 'text-indigo-600' : 'text-gray-500 hover:text-indigo-600' }}">Katalog</a>
-                <a href="{{ route('user.history') }}" class="text-sm font-medium {{ request()->routeIs('user.history') ? 'text-indigo-600' : 'text-gray-500 hover:text-indigo-600' }}">Riwayat</a>
-                
-                <div class="h-6 w-px bg-gray-200"></div>
-                
-                <div class="flex flex-col text-right">
-                    <span class="text-sm text-gray-800 font-bold leading-none">{{ auth()->user()->name }}</span>
-                    <span class="text-[10px] text-gray-400 uppercase tracking-tighter">{{ auth()->user()->role }}</span>
-                </div>
-
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="text-sm font-bold text-red-500 hover:text-red-700 transition">Keluar</button>
-                </form>
-            </div>
-        </div>
+@section('content')
+    <div class="mb-8">
+        <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight">Riwayat Peminjaman</h1>
+        <p class="text-slate-500 mt-1 font-medium">Pantau status buku yang Anda pinjam di sini secara real-time.</p>
     </div>
-</nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Riwayat Peminjaman</h1>
-            <p class="text-gray-500 mt-1">Pantau status buku yang Anda pinjam di sini.</p>
-        </div>
-
-        <div class="bg-white shadow-sm border border-gray-100 rounded-2xl overflow-hidden">
+    <div class="bg-white shadow-xl shadow-slate-200/50 border border-slate-100 rounded-3xl overflow-hidden">
+        <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
-                <thead class="bg-gray-50 border-b">
+                <thead class="bg-slate-50/50 border-b border-slate-100">
                     <tr>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Buku</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Tanggal Pinjam</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider">Batas Kembali</th>
-                        <th class="px-6 py-4 text-xs font-bold text-gray-400 uppercase tracking-wider text-center">Status</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Buku</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Tanggal Pinjam</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Batas Kembali</th>
+                        <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Status</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-100 text-sm">
+                <tbody class="divide-y divide-slate-100 text-sm">
                     @forelse($histories as $history)
-                        <tr class="hover:bg-gray-50 transition">
-                            <td class="px-6 py-5">
-                                <div class="flex items-center">
-                                    <div class="h-10 w-8 bg-gray-200 rounded flex-shrink-0 overflow-hidden mr-3">
+                        <tr class="hover:bg-slate-50/50 transition-colors group">
+                            <td class="px-8 py-6">
+                                <div class="flex items-center gap-4">
+                                    <div class="h-14 w-10 bg-slate-100 rounded-lg flex-shrink-0 overflow-hidden shadow-sm group-hover:shadow-md transition-all border border-slate-200">
                                         @if($history->book->book_cover)
                                             <img src="{{ asset('storage/' . $history->book->book_cover) }}" class="w-full h-full object-cover">
+                                        @else
+                                            <div class="w-full h-full flex items-center justify-center bg-indigo-50 text-indigo-300">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                                </svg>
+                                            </div>
                                         @endif
                                     </div>
-                                    <span class="font-bold text-gray-800">{{ $history->book->title }}</span>
+                                    <div class="flex flex-col">
+                                        <span class="font-bold text-slate-800 text-base leading-tight">{{ $history->book->title }}</span>
+                                        <span class="text-xs text-slate-400 font-medium">ISBN: {{ $history->book->isbn ?? '-' }}</span>
+                                    </div>
                                 </div>
                             </td>
-                            <td class="px-6 py-5 text-gray-600">
+                            <td class="px-8 py-6 text-slate-600 font-semibold">
                                 {{ \Carbon\Carbon::parse($history->borrow_date)->translatedFormat('d F Y') }}
                             </td>
-                            <td class="px-6 py-5 text-gray-600 font-medium">
+                            <td class="px-8 py-6 text-slate-600 font-semibold">
                                 {{ \Carbon\Carbon::parse($history->return_due_date)->translatedFormat('d F Y') }}
                             </td>
-                            <td class="px-6 py-5 text-center">
-                                @if($history->status == 'pending')
-                                    <span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-[11px] font-bold uppercase tracking-wide">Menunggu</span>
-                                @elseif($history->status == 'approved')
-                                    <span class="px-3 py-1 bg-green-100 text-green-700 rounded-full text-[11px] font-bold uppercase tracking-wide">Dipinjam</span>
-                                @elseif($history->status == 'rejected')
-                                    <span class="px-3 py-1 bg-red-100 text-red-700 rounded-full text-[11px] font-bold uppercase tracking-wide">Ditolak</span>
-                                @else
-                                    <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-[11px] font-bold uppercase tracking-wide">Kembali</span>
-                                @endif
+                            <td class="px-8 py-6 text-center">
+                                @php
+                                    $statusClasses = [
+                                        'pending' => 'bg-amber-50 text-amber-600 border-amber-100',
+                                        'approved' => 'bg-emerald-50 text-emerald-600 border-emerald-100',
+                                        'rejected' => 'bg-rose-50 text-rose-600 border-rose-100',
+                                        'returned' => 'bg-slate-100 text-slate-500 border-slate-200'
+                                    ];
+                                    $statusLabels = [
+                                        'pending' => 'Menunggu',
+                                        'approved' => 'Dipinjam',
+                                        'rejected' => 'Ditolak',
+                                        'returned' => 'Selesai'
+                                    ];
+                                @endphp
+                                <span class="px-4 py-1.5 border {{ $statusClasses[$history->status] ?? $statusClasses['returned'] }} rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm">
+                                    {{ $statusLabels[$history->status] ?? 'Kembali' }}
+                                </span>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="4" class="px-6 py-12 text-center text-gray-400 italic">
-                                Anda belum pernah meminjam buku.
+                            <td colspan="4" class="px-8 py-20 text-center">
+                                <div class="flex flex-col items-center justify-center opacity-40">
+                                    <svg class="w-16 h-16 mb-4 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                    </svg>
+                                    <p class="text-slate-500 italic font-medium">Belum ada riwayat aktivitas peminjaman.</p>
+                                </div>
                             </td>
                         </tr>
                     @endforelse
@@ -100,6 +83,4 @@
             </table>
         </div>
     </div>
-
-</body>
-</html>
+@endsection 

@@ -1,146 +1,166 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Katalog Buku - ALPUS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50">
+@extends('layouts.user')
 
-    <nav class="bg-white shadow-sm sticky top-0 z-10 mb-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16 items-center">
-            <div class="flex items-center gap-4">
-                <span class="text-2xl font-extrabold text-indigo-600 tracking-tight">ALPUS</span>
-                
-                {{-- Tombol Khusus Admin agar bisa balik ke dashboard utama --}}
-                @if(auth()->user()->role === 'admin')
-                    <a href="{{ route('admin.dashboard') }}" class="ml-2 bg-red-600 hover:bg-red-700 text-white text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider transition-all">
-                        Admin Mode
-                    </a>
-                @endif
-            </div>
+@section('title', 'Katalog Buku - ALPUS')
 
-            <div class="flex items-center gap-6">
-                <a href="{{ route('user.dashboard') }}" class="text-sm font-medium {{ request()->routeIs('user.dashboard') ? 'text-indigo-600' : 'text-gray-500 hover:text-indigo-600' }}">Katalog</a>
-                <a href="{{ route('user.history') }}" class="text-sm font-medium {{ request()->routeIs('user.history') ? 'text-indigo-600' : 'text-gray-500 hover:text-indigo-600' }}">Riwayat</a>
-                
-                <div class="h-6 w-px bg-gray-200"></div>
-                
-                <div class="flex flex-col text-right">
-                    <span class="text-sm text-gray-800 font-bold leading-none">{{ auth()->user()->name }}</span>
-                    <span class="text-[10px] text-gray-400 uppercase tracking-tighter">{{ auth()->user()->role }}</span>
-                </div>
-
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="text-sm font-bold text-red-500 hover:text-red-700 transition">Keluar</button>
-                </form>
-            </div>
-        </div>
+@section('content')
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
+    {{-- Header --}}
+    <div class="mb-12">
+        <h1 class="text-4xl font-black text-slate-900 tracking-tight leading-none">Katalog Buku</h1>
+        <p class="text-slate-500 font-medium italic text-sm mt-3 flex items-center gap-2">
+            <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span>
+            Pilih buku yang ingin Anda pinjam hari ini.
+        </p>
     </div>
-</nav>
 
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        
-        <div class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900">Katalog Buku</h1>
-            <p class="text-gray-500 mt-1">Pilih buku yang ingin Anda pinjam hari ini.</p>
-        </div>
-
-        <div id="notification-area">
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-green-50 border-l-4 border-green-500 text-green-800 rounded shadow-sm flex justify-between items-center transition-all duration-500">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                        <span>{{ session('success') }}</span>
-                    </div>
-                </div>
-            @endif
-
-            @if(session('error'))
-                <div class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 text-red-800 rounded shadow-sm flex justify-between items-center transition-all duration-500">
-                    <div class="flex items-center">
-                        <svg class="w-5 h-5 mr-2 text-red-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
-                        <span>{{ session('error') }}</span>
-                    </div>
-                </div>
-            @endif
-        </div>
-
-        <div class="mb-8 flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
-            <a href="{{ route('user.dashboard') }}" 
-               class="px-5 py-2 rounded-full text-sm font-medium transition {{ !request('category_id') ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 border hover:bg-gray-50' }}">
-                Semua Buku
+    {{-- Kategori --}}
+    <div class="mb-10 flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+        <a href="{{ route('user.dashboard') }}" 
+           class="px-8 py-3 rounded-2xl text-sm font-black transition-all border-2 {{ !request('category_id') ? 'bg-slate-900 border-slate-900 text-white shadow-xl shadow-slate-200 -translate-y-1' : 'bg-white border-slate-100 text-slate-400 hover:border-indigo-200 hover:text-indigo-600' }}">
+            Semua Koleksi
+        </a>
+        @foreach($categories as $cat)
+            <a href="{{ route('user.dashboard', ['category_id' => $cat->id]) }}" 
+               class="px-8 py-3 rounded-2xl text-sm font-black whitespace-nowrap transition-all border-2 {{ request('category_id') == $cat->id ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-100 -translate-y-1' : 'bg-white border-slate-100 text-slate-400 hover:border-indigo-200 hover:text-indigo-600' }}">
+                {{ $cat->name }}
             </a>
-            @foreach($categories as $cat)
-                <a href="{{ route('user.dashboard', ['category_id' => $cat->id]) }}" 
-                   class="px-5 py-2 rounded-full text-sm font-medium whitespace-nowrap transition {{ request('category_id') == $cat->id ? 'bg-indigo-600 text-white shadow-md' : 'bg-white text-gray-600 border hover:bg-gray-50' }}">
-                    {{ $cat->name }}
-                </a>
-            @endforeach
-        </div>
+        @endforeach
+    </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
-            @forelse($books as $book)
-                <div class="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden group">
-                    <div class="relative aspect-[3/4] bg-gray-100 overflow-hidden">
-                        @if($book->book_cover)
-                            <img src="{{ asset('storage/' . $book->book_cover) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        @else
-                            <div class="flex flex-col items-center justify-center h-full text-gray-400">
-                                <svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
-                                <span class="text-xs italic">No Cover</span>
-                            </div>
-                        @endif
-                        <div class="absolute top-3 left-3">
-                            <span class="bg-white/90 backdrop-blur px-2 py-1 rounded-md text-[10px] font-bold text-indigo-600 uppercase shadow-sm">
-                                {{ $book->category->name ?? 'Umum' }}
+    {{-- Grid Buku --}}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 mb-20">
+        @forelse($books as $book)
+            <div class="group bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 flex flex-col overflow-hidden hover:-translate-y-2">
+                
+                <div class="relative aspect-[3/4] overflow-hidden m-3 rounded-[1.8rem] bg-slate-50">
+                    @if($book->book_cover)
+                        <img src="{{ asset('storage/' . $book->book_cover) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    @else
+                        <div class="w-full h-full flex flex-col items-center justify-center text-slate-300">
+                            <svg class="w-16 h-16 mb-2 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                        </div>
+                    @endif
+
+                    <div class="absolute top-4 left-4">
+                        <span class="bg-white/90 backdrop-blur-md px-4 py-1.5 rounded-xl text-[9px] font-black text-indigo-600 uppercase tracking-widest shadow-sm">
+                            {{ $book->category->name ?? 'Umum' }}
+                        </span>
+                    </div>
+                </div>
+
+                <div class="px-7 pb-7 pt-2 flex-grow flex flex-col">
+                    <h3 class="text-xl font-black text-slate-800 leading-tight mb-2 line-clamp-2">{{ $book->title }}</h3>
+                    <p class="text-sm text-slate-400 font-bold italic mb-6">Oleh: {{ $book->author }}</p>
+                    
+                    <div class="mt-auto">
+                        <div class="flex justify-between items-center mb-5 bg-slate-50 px-4 py-2 rounded-xl text-sm">
+                            <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Tersedia</span>
+                            <span class="font-black {{ $book->stock > 0 ? 'text-indigo-600' : 'text-rose-500' }}">
+                                {{ $book->stock }} Eks
                             </span>
                         </div>
-                    </div>
 
-                    <div class="p-5 flex-grow flex flex-col">
-                        <h3 class="text-lg font-bold text-gray-900 leading-snug mb-1 line-clamp-2">{{ $book->title }}</h3>
-                        <p class="text-sm text-gray-500 mb-4 italic">Oleh: {{ $book->author }}</p>
-                        
-                        <div class="mt-auto">
-                            <div class="flex justify-between items-center mb-4 text-sm">
-                                <span class="text-gray-400">Tersedia:</span>
-                                <span class="font-bold {{ $book->stock > 0 ? 'text-green-600' : 'text-red-500' }}">
-                                    {{ $book->stock }} Eks
-                                </span>
-                            </div>
+                        {{-- Tombol dengan Trigger SweetAlert --}}
+                        @if($book->stock > 0)
+                            <button type="button" 
+                                    class="btn-borrow-confirm w-full py-4 rounded-2xl font-black text-sm transition-all bg-indigo-600 text-white hover:bg-slate-900 shadow-xl shadow-indigo-100 active:scale-95"
+                                    data-id="{{ $book->id }}"
+                                    data-title="{{ $book->title }}">
+                                Pinjam Sekarang
+                            </button>
 
-                            <form action="{{ route('borrow.store', $book->id) }}" method="POST">
+                            <form id="borrow-form-{{ $book->id }}" action="{{ route('user.borrow.store', $book->id) }}" method="POST" class="hidden">
                                 @csrf
-                                <button type="submit" 
-                                        class="w-full py-2.5 rounded-xl font-bold text-sm transition-all {{ $book->stock > 0 ? 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-indigo-200 shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed' }}"
-                                        {{ $book->stock <= 0 ? 'disabled' : '' }}>
-                                    {{ $book->stock > 0 ? 'Pinjam Sekarang' : 'Stok Habis' }}
-                                </button>
                             </form>
-                        </div>
+                        @else
+                            <button type="button" class="w-full py-4 rounded-2xl font-black text-sm bg-slate-100 text-slate-300 cursor-not-allowed" disabled>
+                                Stok Habis
+                            </button>
+                        @endif
                     </div>
                 </div>
-            @empty
-                <div class="col-span-full py-20 text-center">
-                    <p class="text-gray-400 text-lg">Tidak ada buku di kategori ini.</p>
-                </div>
-            @endforelse
-        </div>
+            </div>
+        @empty
+            <div class="col-span-full py-32 text-center bg-white rounded-[3rem] border-2 border-dashed border-slate-100">
+                <p class="text-slate-400 font-bold italic">Tidak ada koleksi buku di kategori ini.</p>
+            </div>
+        @endforelse
     </div>
+</div>
 
-    <script>
-        setTimeout(function() {
-            const notification = document.getElementById('notification-area');
-            if (notification) {
-                notification.style.opacity = '0';
-                setTimeout(() => notification.innerHTML = '', 500);
+{{-- SCRIPT SWEETALERT --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    // 1. Handling Notifikasi dari Controller
+    @if(session('success'))
+        Swal.fire({
+            icon: 'success',
+            title: 'Berhasil!',
+            text: '{{ session("success") }}',
+            showConfirmButton: false,
+            timer: 2500,
+            background: '#ffffff',
+            iconColor: '#4f46e5',
+            customClass: {
+                title: 'font-black text-slate-800',
+                popup: 'rounded-[2.5rem] border-none shadow-2xl'
             }
-        }, 3000); // Hilang setelah 3 detik
-    </script>
+        });
+    @endif
 
-</body>
-</html>
+    @if(session('error'))
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops!',
+            text: '{{ session("error") }}',
+            confirmButtonColor: '#f43f5e',
+            background: '#ffffff',
+            customClass: {
+                title: 'font-black text-slate-800',
+                popup: 'rounded-[2.5rem] border-none shadow-2xl',
+                confirmButton: 'rounded-xl font-bold px-6 py-3'
+            }
+        });
+    @endif
+
+    // 2. Konfirmasi Pinjam Buku
+    document.querySelectorAll('.btn-borrow-confirm').forEach(button => {
+        button.addEventListener('click', function() {
+            const id = this.getAttribute('data-id');
+            const title = this.getAttribute('data-title');
+
+            Swal.fire({
+                title: 'Pinjam Buku Ini?',
+                text: `Konfirmasi pengajuan pinjam untuk buku "${title}".`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#4f46e5',
+                cancelButtonColor: '#94a3b8',
+                confirmButtonText: 'Ya, Pinjam',
+                cancelButtonText: 'Batal',
+                background: '#ffffff',
+                reverseButtons: true,
+                customClass: {
+                    title: 'font-black text-slate-800',
+                    popup: 'rounded-[2.5rem] border-none shadow-2xl',
+                    confirmButton: 'rounded-xl font-bold px-6 py-3',
+                    cancelButton: 'rounded-xl font-bold px-6 py-3'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Beri efek loading agar terasa lebih responsif
+                    Swal.fire({
+                        title: 'Memproses...',
+                        allowOutsideClick: false,
+                        didOpen: () => {
+                            Swal.showLoading();
+                        }
+                    });
+                    document.getElementById(`borrow-form-${id}`).submit();
+                }
+            });
+        });
+    });
+</script>
+@endsection
