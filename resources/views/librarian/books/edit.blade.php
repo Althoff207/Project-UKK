@@ -1,95 +1,104 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Buku - E-Lib</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
-    <nav class="bg-indigo-700 shadow-lg mb-8 text-white">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex justify-between items-center">
-        <div class="flex gap-6 items-center">
-            <span class="font-bold text-xl tracking-wider mr-4">ALPUS LIBRARIAN</span>
-            
-            {{-- Tombol Khusus Admin --}}
-            @if(auth()->user()->role === 'admin')
-                <a href="{{ route('admin.dashboard') }}" class="bg-red-600 hover:bg-red-700 text-white text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-wider transition-all shadow-sm">
-                    Kembali ke Admin
-                </a>
-            @endif
+@extends('layouts.librarian')
 
-            <a href="{{ route('librarian.dashboard') }}" class="text-sm {{ request()->routeIs('librarian.dashboard') ? 'font-bold border-b-2 border-white' : 'opacity-80 hover:opacity-100' }} py-2">Persetujuan</a>
-            <a href="{{ route('librarian.returns') }}" class="text-sm {{ request()->routeIs('librarian.returns') ? 'font-bold border-b-2 border-white' : 'opacity-80 hover:opacity-100' }} py-2">Pengembalian</a>
-            <a href="{{ route('librarian.books.index') }}" class="text-sm {{ request()->routeIs('librarian.books.*') ? 'font-bold border-b-2 border-white' : 'opacity-80 hover:opacity-100' }} py-2">Kelola Buku</a>
-            <a href="{{ route('librarian.categories.index') }}" class="text-sm {{ request()->routeIs('librarian.categories.*') ? 'font-bold border-b-2 border-white' : 'opacity-80 hover:opacity-100' }} py-2">Kategori</a>
-        </div>
-        
-        <div class="flex items-center gap-4">
-            <span class="text-xs italic opacity-70">{{ auth()->user()->name }} ({{ auth()->user()->role }})</span>
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="text-sm bg-indigo-800 px-4 py-2 rounded hover:bg-red-600 transition">Logout</button>
-            </form>
-        </div>
+@section('title', 'Edit Buku - E-Lib')
+
+@section('content')
+<div class="max-w-4xl mx-auto">
+    <div class="mb-10">
+        <a href="{{ route('librarian.books.index') }}" class="text-indigo-600 font-bold text-sm flex items-center gap-2 mb-4 hover:gap-3 transition-all">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Kembali ke Katalog
+        </a>
+        <h1 class="text-3xl font-black text-slate-900 tracking-tight">Edit Detail Buku</h1>
+        <p class="text-slate-500 font-medium italic text-sm mt-1">Perbarui informasi koleksi buku perpustakaan.</p>
     </div>
-</nav>
-    <div class="max-w-3xl mx-auto py-12 px-4">
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden">
-            <div class="bg-blue-600 p-6 text-white">
-                <h2 class="text-xl font-bold">Edit Data Buku</h2>
+
+    <div class="bg-white rounded-[2.5rem] border border-slate-100 shadow-xl overflow-hidden">
+        <div class="bg-slate-50/50 p-8 border-b border-slate-100">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-2xl flex items-center justify-center shadow-inner">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                </div>
+                <div>
+                    <h3 class="font-black text-slate-800 uppercase tracking-widest text-xs">Formulir Pembaruan</h3>
+                    <p class="text-slate-400 text-xs font-bold italic">ID Buku: #BK-{{ $book->id }}</p>
+                </div>
             </div>
-            
-            <form action="{{ route('librarian.books.update', $book->id) }}" method="POST" enctype="multipart/form-data" class="p-8 space-y-6">
-                @csrf
-                @method('PUT')
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div class="col-span-2">
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Judul Buku</label>
-                        <input type="text" name="title" value="{{ $book->title }}" class="w-full border rounded-lg p-2.5" required>
-                    </div>
+        </div>
 
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Penulis</label>
-                        <input type="text" name="author" value="{{ $book->author }}" class="w-full border rounded-lg p-2.5" required>
-                    </div>
+        <form action="{{ route('librarian.books.update', $book->id) }}" method="POST" enctype="multipart/form-data" class="p-10 space-y-8">
+            @csrf
+            @method('PUT')
 
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Kategori</label>
-                        <select name="category_id" class="w-full border rounded-lg p-2.5" required>
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat->id }}" {{ $book->category_id == $cat->id ? 'selected' : '' }}>
-                                    {{ $cat->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="md:col-span-2">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1">Judul Lengkap</label>
+                    <input type="text" name="title" value="{{ $book->title }}" 
+                        class="w-full bg-slate-50 border-none rounded-2xl p-4 text-slate-800 font-bold focus:ring-4 focus:ring-indigo-100 transition-all placeholder:text-slate-300" 
+                        required placeholder="Masukkan judul buku...">
+                </div>
 
-                    <div>
-                        <label class="block text-sm font-bold text-gray-700 mb-2">Stok</label>
-                        <input type="number" name="stock" value="{{ $book->stock }}" class="w-full border rounded-lg p-2.5" required>
-                    </div>
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1">Penulis / Nama Pengarang</label>
+                    <input type="text" name="author" value="{{ $book->author }}" 
+                        class="w-full bg-slate-50 border-none rounded-2xl p-4 text-slate-800 font-bold focus:ring-4 focus:ring-indigo-100 transition-all placeholder:text-slate-300" 
+                        required placeholder="Nama penulis...">
+                </div>
 
-                    <div class="col-span-2 flex gap-4 items-center bg-gray-50 p-4 rounded-lg">
-                        <div class="w-20 h-28 bg-gray-200 rounded overflow-hidden flex-shrink-0">
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1">Kategori Genre</label>
+                    <select name="category_id" 
+                        class="w-full bg-slate-50 border-none rounded-2xl p-4 text-slate-800 font-bold focus:ring-4 focus:ring-indigo-100 transition-all appearance-none cursor-pointer" 
+                        required>
+                        @foreach($categories as $cat)
+                            <option value="{{ $cat->id }}" {{ $book->category_id == $cat->id ? 'selected' : '' }}>
+                                {{ $cat->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-3 ml-1">Jumlah Stok</label>
+                    <input type="number" name="stock" value="{{ $book->stock }}" 
+                        class="w-full bg-slate-50 border-none rounded-2xl p-4 text-slate-800 font-black focus:ring-4 focus:ring-indigo-100 transition-all" 
+                        required min="0">
+                </div>
+
+                <div class="md:col-span-2 flex flex-col sm:flex-row gap-6 items-center bg-slate-50/50 p-6 rounded-[2rem] border-2 border-dashed border-slate-100">
+                    <div class="relative group">
+                        <div class="w-24 h-32 bg-white rounded-xl shadow-lg overflow-hidden border-4 border-white">
                             @if($book->book_cover)
-                                <img src="{{ asset('storage/'.$book->book_cover) }}" class="w-full h-full object-cover">
+                                <img src="{{ asset('storage/'.$book->book_cover) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                            @else
+                                <div class="w-full h-full bg-slate-100 flex items-center justify-center text-slate-300 italic text-[10px]">No Cover</div>
                             @endif
                         </div>
-                        <div>
-                            <label class="block text-sm font-bold text-gray-700 mb-1">Ganti Cover (Kosongkan jika tidak diubah)</label>
-                            <input type="file" name="book_cover" class="text-sm text-gray-500">
+                        <div class="absolute -bottom-2 -right-2 bg-indigo-600 text-white p-1.5 rounded-lg shadow-lg">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
                         </div>
                     </div>
+                    
+                    <div class="flex-1 text-center sm:text-left">
+                        <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-2 ml-1">Perbarui Cover Buku</label>
+                        <input type="file" name="book_cover" 
+                            class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-black file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 transition-all cursor-pointer">
+                        <p class="text-[10px] text-slate-400 mt-2 italic font-medium">*Kosongkan jika tidak ingin mengubah sampul buku.</p>
+                    </div>
                 </div>
+            </div>
 
-                <div class="flex justify-end gap-4 mt-8 pt-6 border-t">
-                    <a href="{{ route('librarian.books.index') }}" class="text-sm font-bold text-gray-500">Batal</a>
-                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-lg transition shadow-md">
-                        Perbarui Data
-                    </button>
-                </div>
-            </form>
-        </div>
+            <div class="flex flex-col sm:flex-row justify-end gap-4 mt-12 pt-8 border-t border-slate-50">
+                <a href="{{ route('librarian.books.index') }}" 
+                    class="order-2 sm:order-1 px-8 py-4 text-slate-400 font-bold text-sm hover:text-slate-600 transition-colors text-center">
+                    Batalkan Perubahan
+                </a>
+                <button type="submit" 
+                    class="order-1 sm:order-2 bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-4 rounded-2xl font-black text-sm transition-all shadow-xl shadow-indigo-100 hover:-translate-y-1">
+                    Simpan Perubahan
+                </button>
+            </div>
+        </form>
     </div>
-</body>
-</html>
+</div>
+@endsection

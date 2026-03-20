@@ -7,40 +7,54 @@ use App\Models\Book;
 use App\Models\Borrow;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
 {
     public function dashboard()
     {
-        // Statistik untuk Dashboard
         $data = [
             'total_user' => User::count(),
             'total_buku' => Book::count(),
-            'total_pinjam' => Borrow::where('status', 'approved')->count(),
+            'total_pinjam' => Borrow::where('status', 'disetujui')->count(),
             'total_kategori' => Category::count(),
         ];
-
         return view('admin.dashboard', compact('data'));
     }
 
     public function index(Request $request)
     {
-        // Ambil input pencarian dari form
-        $search = $request->input('search');
-
-        // Query user: sembunyikan diri sendiri agar admin tidak sengaja menghapus akunnya sendiri
-        $users = User::where('id', '!=', auth()->id())
-            ->when($search, function ($query) use ($search) {
-                // Cari berdasarkan nama ATAU email
-                return $query->where(function ($q) use ($search) {
-                    $q->where('name', 'like', "%{$search}%")
-                        ->orWhere('email', 'like', "%{$search}%");
-                });
-            })
-            ->latest()
-            ->paginate(10); // Menambahkan pagination agar tampilan lebih rapi
+        $search = $request->search;
+        $users = User::when($search, function($query) use ($search) {
+            $query->where('name', 'like', "%$search%")
+                  ->orWhere('email', 'like', "%$search%");
+        })->paginate(10);
 
         return view('admin.users.index', compact('users'));
+    }
+
+    public function create()
+    {
+        return view('admin.users.create');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:8',
+            'role' => 'required'
+        ]);
+
+        User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'role' => $request->role,
+        ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan!');
     }
 
     public function edit(User $user)
@@ -50,32 +64,29 @@ class AdminController extends Controller
 
     public function update(Request $request, User $user)
     {
-        // Validasi data
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'role' => 'required|in:admin,librarian,user',
-            'password' => 'nullable|min:8', // nullable artinya boleh kosong
+            'name' => 'required',
+            'email' => 'required|email|unique:users,email,'.$user->id,
+            'role' => 'required'
         ]);
 
-        // Update data dasar
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
-
-        // Cek jika password diisi, maka di-hash dan disimpan
-        if ($request->filled('password')) {
-            $user->password = \Illuminate\Support\Facades\Hash::make($request->password);
-        }
-
+        if($request->password) $user->password = Hash::make($request->password);
         $user->save();
 
-        return redirect()->route('admin.users.index')->with('success', 'Data user berhasil diperbarui sepenuhnya!');
+        return redirect()->route('admin.users.index')->with('success', 'Data user diperbarui!');
     }
 
     public function destroy(User $user)
     {
         $user->delete();
-        return back()->with('success', 'User berhasil dihapus!');
+        return redirect()->route('admin.users.index')->with('success', 'User telah dihapus!');
+    }
+
+    public function import(Request $request)
+    {
+        return redirect()->back()->with('success', 'Fitur Impor Massal sedang dalam pengembangan!');
     }
 }

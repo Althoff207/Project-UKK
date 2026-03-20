@@ -1,67 +1,54 @@
-<!DOCTYPE html>
-<html lang="id">
+@extends('layouts.admin')
 
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Pengguna - Superadmin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
+@section('title', 'Edit Akses')
 
-<body class="bg-gray-100 min-h-screen flex flex-col items-center justify-center p-4">
-    <div class="w-full max-w-md">
-        <div class="bg-white p-8 rounded-2xl shadow-xl border relative overflow-hidden">
-            <div class="absolute top-0 left-0 w-full h-2 bg-red-600"></div>
+@section('nav_icon_bg', 'bg-amber-500')
+@section('nav_icon')
+    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+@endsection
 
-            <h2 class="text-2xl font-black mb-1 text-gray-800 uppercase tracking-tight">Edit Akses</h2>
-            <p class="text-gray-500 text-xs mb-8">Memperbarui hak akses untuk: <span class="font-bold text-red-600">{{ $user->email }}</span></p>
+@section('content')
+<div class="max-w-xl mx-auto">
+    <div class="bg-white p-10 md:p-14 rounded-[3rem] shadow-2xl relative overflow-hidden border border-white">
+        <div class="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-amber-500 to-rose-600"></div>
 
-            <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="space-y-4">
-                @csrf
-                @method('PUT')
+        <div class="mb-10 text-center">
+            <h2 class="text-3xl font-black text-slate-900 uppercase tracking-tighter">Konfigurasi Akses</h2>
+            <p class="text-slate-400 text-sm mt-2 font-medium">Mengelola kredensial: <span class="text-indigo-600 font-bold italic">{{ $user->email }}</span></p>
+        </div>
 
-                {{-- Input Nama --}}
-                <div>
-                    <label class="block text-xs font-black text-gray-500 uppercase mb-1">Nama Lengkap</label>
-                    <input type="text" name="name" value="{{ $user->name }}"
-                        class="w-full border-2 rounded-xl p-3 focus:border-red-500 outline-none transition font-medium" required>
+        <form action="{{ route('admin.users.update', $user->id) }}" method="POST" class="space-y-6">
+            @csrf @method('PUT')
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Identitas Lengkap</label>
+                    <input type="text" name="name" value="{{ $user->name }}" class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-4 focus:ring-amber-500/10 focus:bg-white outline-none transition-all font-bold text-slate-800" required>
                 </div>
-
-                {{-- Input Email --}}
-                <div>
-                    <label class="block text-xs font-black text-gray-500 uppercase mb-1">Alamat Email</label>
-                    <input type="email" name="email" value="{{ $user->email }}"
-                        class="w-full border-2 rounded-xl p-3 focus:border-red-500 outline-none transition font-medium" required>
-                </div>
-
-                {{-- Input Role --}}
-                <div>
-                    <label class="block text-xs font-black text-gray-500 uppercase mb-1">Level Pengguna (Role)</label>
-                    <select name="role" class="w-full border-2 rounded-xl p-3 focus:border-red-500 outline-none transition font-medium bg-gray-50">
-                        <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>Siswa (User)</option>
-                        <option value="librarian" {{ $user->role == 'librarian' ? 'selected' : '' }}>Petugas (Librarian)</option>
-                        <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Administrator (Admin)</option>
+                <div class="space-y-2">
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Level Otoritas</label>
+                    <select name="role" class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-4 focus:ring-amber-500/10 focus:bg-white outline-none transition-all font-bold text-slate-800 appearance-none cursor-pointer">
+                        <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>Siswa</option>
+                        <option value="librarian" {{ $user->role == 'librarian' ? 'selected' : '' }}>Petugas</option>
+                        <option value="admin" {{ $user->role == 'admin' ? 'selected' : '' }}>Admin</option>
                     </select>
                 </div>
+            </div>
 
-                {{-- Input Password Baru --}}
-                <div class="bg-yellow-50 p-4 rounded-xl border border-yellow-100">
-                    <label class="block text-xs font-black text-yellow-700 uppercase mb-1">Ganti Password (Opsional)</label>
-                    <input type="password" name="password" placeholder="Isi hanya jika ingin ganti password"
-                        class="w-full border-2 border-yellow-200 rounded-lg p-3 focus:border-yellow-500 outline-none transition text-sm">
-                    <p class="text-[10px] text-yellow-600 mt-2">*Kosongkan jika tidak ingin mengubah password user.</p>
-                </div>
+            <div class="space-y-2">
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Alamat Email</label>
+                <input type="email" name="email" value="{{ $user->email }}" class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-4 focus:ring-amber-500/10 focus:bg-white outline-none transition-all font-bold text-slate-800" required>
+            </div>
 
-                <div class="flex flex-col gap-2 pt-4">
-                    <button type="submit" class="w-full bg-red-600 text-white py-3 rounded-xl font-bold shadow-lg hover:bg-red-700 transition transform active:scale-95">
-                        Simpan Perubahan
-                    </button>
-                    <a href="{{ route('admin.users.index') }}" class="w-full text-center py-3 text-sm font-bold text-gray-400 hover:text-gray-600 transition">
-                        Batal
-                    </a>
-                </div>
-            </form>
-        </div>
+            <div class="bg-amber-50/50 p-6 rounded-[2rem] border border-amber-100/50 space-y-3">
+                <label class="block text-[10px] font-black text-amber-700 uppercase tracking-widest">Ganti Password (Opsional)</label>
+                <input type="password" name="password" placeholder="Kosongkan jika tidak berubah" class="w-full bg-white/60 border-none rounded-xl p-3 focus:ring-2 focus:ring-amber-500 outline-none transition text-sm text-slate-800 placeholder:text-amber-300 font-medium">
+            </div>
+
+            <div class="flex flex-col gap-3 pt-6">
+                <button type="submit" class="w-full bg-slate-900 text-white py-4 rounded-[1.5rem] font-black text-sm uppercase tracking-widest shadow-xl hover:bg-amber-500 transition-all active:scale-95">Simpan Konfigurasi</button>
+                <a href="{{ route('admin.users.index') }}" class="w-full text-center py-2 text-xs font-black text-slate-300 hover:text-rose-500 transition-colors uppercase tracking-widest">Batal</a>
+            </div>
+        </form>
     </div>
-</body>
-
-</html>
+</div>
+@endsection

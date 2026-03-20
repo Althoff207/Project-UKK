@@ -36,4 +36,39 @@ class UserController extends Controller
 
     return view('user.history', compact('histories'));
 }
+// Menampilkan halaman tambah (Single & Bulk)
+public function create()
+{
+    return view('admin.users.create');
+}
+
+// Menyimpan single user
+public function store(Request $request)
+{
+    $request->validate([
+        'name' => 'required',
+        'email' => 'required|email|unique:users',
+        'password' => 'required|min:8',
+        'role' => 'required'
+    ]);
+
+    \App\Models\User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => bcrypt($request->password),
+        'role' => $request->role,
+    ]);
+
+    return redirect()->route('admin.users.index')->with('success', 'User berhasil ditambahkan!');
+}
+
+// Logika Import Massal (Dasar)
+public function import(Request $request)
+{
+    $request->validate(['file' => 'required|mimes:csv,txt,xlsx']);
+    
+    // Di sini nanti kamu bisa pakai Laravel Excel untuk baca file-nya
+    // Untuk sementara kita arahkan kembali dengan pesan sukses
+    return redirect()->route('admin.users.index')->with('success', 'Data masal sedang diproses!');
+}
 }

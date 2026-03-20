@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Katalog Buku - E-Lib</title>
+    <title>Katalog Buku - ALPUS</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50">
@@ -12,7 +12,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16 items-center">
             <div class="flex items-center gap-4">
-                <span class="text-2xl font-extrabold text-indigo-600 tracking-tight">E-LIB</span>
+                <span class="text-2xl font-extrabold text-indigo-600 tracking-tight">ALPUS</span>
                 
                 {{-- Tombol Khusus Admin agar bisa balik ke dashboard utama --}}
                 @if(auth()->user()->role === 'admin')
