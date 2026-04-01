@@ -21,11 +21,11 @@
             @csrf @method('PUT')
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Identitas Lengkap</label>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Nama</label>
                     <input type="text" name="name" value="{{ $user->name }}" class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-4 focus:ring-amber-500/10 focus:bg-white outline-none transition-all font-bold text-slate-800" required>
                 </div>
                 <div class="space-y-2">
-                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Level Otoritas</label>
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Role</label>
                     <select name="role" class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-4 focus:ring-amber-500/10 focus:bg-white outline-none transition-all font-bold text-slate-800 appearance-none cursor-pointer">
                         <option value="user" {{ $user->role == 'user' ? 'selected' : '' }}>Siswa</option>
                         <option value="librarian" {{ $user->role == 'librarian' ? 'selected' : '' }}>Petugas</option>
@@ -35,7 +35,7 @@
             </div>
 
             <div class="space-y-2">
-                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Alamat Email</label>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] ml-2">Email</label>
                 <input type="email" name="email" value="{{ $user->email }}" class="w-full bg-slate-50 border-none rounded-2xl p-4 focus:ring-4 focus:ring-amber-500/10 focus:bg-white outline-none transition-all font-bold text-slate-800" required>
             </div>
 

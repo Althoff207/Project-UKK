@@ -66,6 +66,13 @@
             </div>
 
             <div class="flex items-center gap-6">
+                {{-- TOMBOL KHUSUS ADMIN (DIADAPTASI DARI LAYOUT STAFF) --}}
+                @if(auth()->user()->role === 'admin')
+                    <a href="{{ route('admin.dashboard') }}" class="hidden lg:block bg-rose-600 hover:bg-slate-900 text-white text-[10px] px-5 py-2.5 rounded-xl font-black uppercase tracking-widest transition-all shadow-lg active:scale-95">
+                        Admin Panel
+                    </a>
+                @endif
+
                 <div class="hidden sm:flex flex-col text-right pr-6 border-r border-slate-200">
                     <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 leading-none mb-1.5">Personal Portal</p>
                     <p class="text-sm font-bold text-slate-800 leading-none tracking-tight">{{ auth()->user()->name }}</p>
@@ -100,7 +107,14 @@
                 cancelButtonColor: '#94a3b8',
                 confirmButtonText: 'Ya, Keluar',
                 cancelButtonText: 'Batal',
-                reverseButtons: true
+                background: '#ffffff',
+                reverseButtons: true,
+                customClass: {
+                    title: 'font-black text-slate-800',
+                    popup: 'rounded-[2.5rem] border-none shadow-2xl',
+                    confirmButton: 'rounded-xl font-bold px-6 py-3',
+                    cancelButton: 'rounded-xl font-bold px-6 py-3'
+                }
             }).then((result) => {
                 if (result.isConfirmed) {
                     document.getElementById('logout-overlay').classList.add('active');

@@ -16,9 +16,11 @@ class AdminController extends Controller
         $data = [
             'total_user' => User::count(),
             'total_buku' => Book::count(),
-            'total_pinjam' => Borrow::where('status', 'disetujui')->count(),
+            // FIXED: Menggunakan status 'dipinjam' dan mengganti key agar sinkron dengan View
+            'total_sedang_dipinjam' => Borrow::where('status', 'borrowed')->count(),
             'total_kategori' => Category::count(),
         ];
+        
         return view('admin.dashboard', compact('data'));
     }
 
@@ -73,7 +75,11 @@ class AdminController extends Controller
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
-        if($request->password) $user->password = Hash::make($request->password);
+        
+        if($request->password) {
+            $user->password = Hash::make($request->password);
+        }
+        
         $user->save();
 
         return redirect()->route('admin.users.index')->with('success', 'Data user diperbarui!');

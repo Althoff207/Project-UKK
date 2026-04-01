@@ -61,7 +61,7 @@
                 Digital Library Ecosystem
             </div>
             <h1 class="text-6xl lg:text-8xl font-black tracking-tighter leading-none">
-                ALPUS<br><span class="text-indigo-400">Althoff.</span>
+                ALPUS<br>
             </h1>
             <p class="text-lg text-indigo-100/70 max-w-md leading-relaxed font-medium">
                 Selamat datang di pusat literasi digital. <br>Temukan ilmu, jelajahi dunia, dan kembangkan potensi diri bersama kami.

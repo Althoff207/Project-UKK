@@ -15,17 +15,26 @@
     </div>
 
     {{-- Kategori --}}
-    <div class="mb-10 flex gap-3 overflow-x-auto pb-4 scrollbar-hide">
+    <div class="mb-10 flex items-center gap-4 overflow-x-auto pb-4 scrollbar-hide">
+        
         <a href="{{ route('user.dashboard') }}" 
-           class="px-8 py-3 rounded-2xl text-sm font-black transition-all border-2 {{ !request('category_id') ? 'bg-slate-900 border-slate-900 text-white shadow-xl shadow-slate-200 -translate-y-1' : 'bg-white border-slate-100 text-slate-400 hover:border-indigo-200 hover:text-indigo-600' }}">
+           class="shrink-0 px-7 py-3 rounded-2xl text-[11px] font-black uppercase tracking-wider transition-all duration-200 active:scale-95 flex items-center justify-center
+           {{ !request('category_id') 
+                ? 'bg-slate-900 text-white shadow-lg shadow-slate-900/20' 
+                : 'bg-white text-slate-500 border border-slate-100 hover:text-indigo-600 hover:border-indigo-100 shadow-sm shadow-slate-100/50' }}">
             Semua Koleksi
         </a>
+
         @foreach($categories as $cat)
             <a href="{{ route('user.dashboard', ['category_id' => $cat->id]) }}" 
-               class="px-8 py-3 rounded-2xl text-sm font-black whitespace-nowrap transition-all border-2 {{ request('category_id') == $cat->id ? 'bg-indigo-600 border-indigo-600 text-white shadow-xl shadow-indigo-100 -translate-y-1' : 'bg-white border-slate-100 text-slate-400 hover:border-indigo-200 hover:text-indigo-600' }}">
+               class="shrink-0 px-7 py-3 rounded-2xl text-[11px] font-black uppercase tracking-wider whitespace-nowrap transition-all duration-200 active:scale-95 flex items-center justify-center
+               {{ request('category_id') == $cat->id 
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-600/20' 
+                    : 'bg-white text-slate-500 border border-slate-100 hover:text-indigo-600 hover:border-indigo-100 shadow-sm shadow-slate-100/50' }}">
                 {{ $cat->name }}
             </a>
         @endforeach
+        
     </div>
 
     {{-- Grid Buku --}}
@@ -33,7 +42,8 @@
         @forelse($books as $book)
             <div class="group bg-white rounded-[2.5rem] border border-slate-100 shadow-sm hover:shadow-2xl hover:shadow-slate-200 transition-all duration-500 flex flex-col overflow-hidden hover:-translate-y-2">
                 
-                <div class="relative aspect-[3/4] overflow-hidden m-3 rounded-[1.8rem] bg-slate-50">
+                {{-- Cover Area (Bisa diklik ke Detail) --}}
+                <a href="{{ route('user.books.detail', $book->id) }}" class="relative aspect-[3/4] overflow-hidden m-3 rounded-[1.8rem] bg-slate-50 block">
                     @if($book->book_cover)
                         <img src="{{ asset('storage/' . $book->book_cover) }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
                     @else
@@ -47,10 +57,13 @@
                             {{ $book->category->name ?? 'Umum' }}
                         </span>
                     </div>
-                </div>
+                </a>
 
                 <div class="px-7 pb-7 pt-2 flex-grow flex flex-col">
-                    <h3 class="text-xl font-black text-slate-800 leading-tight mb-2 line-clamp-2">{{ $book->title }}</h3>
+                    {{-- Judul Buku (Bisa diklik ke Detail) --}}
+                    <a href="{{ route('user.books.detail', $book->id) }}">
+                        <h3 class="text-xl font-black text-slate-800 leading-tight mb-2 line-clamp-2 hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
+                    </a>
                     <p class="text-sm text-slate-400 font-bold italic mb-6">Oleh: {{ $book->author }}</p>
                     
                     <div class="mt-auto">
@@ -149,10 +162,11 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Beri efek loading agar terasa lebih responsif
+                    // Tampilkan loading & sembunyikan tombol agar bersih
                     Swal.fire({
                         title: 'Memproses...',
                         allowOutsideClick: false,
+                        showConfirmButton: false, 
                         didOpen: () => {
                             Swal.showLoading();
                         }

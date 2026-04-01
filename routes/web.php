@@ -22,6 +22,7 @@ Route::get('/', function () {
 Route::middleware(['auth', 'role:user'])->prefix('user')->name('user.')->group(function () {
     Route::get('/dashboard', [UserController::class, 'index'])->name('dashboard');
     Route::post('/borrow/{id}', [BorrowController::class, 'store'])->name('borrow.store');
+    Route::get('/books/{id}', [UserController::class, 'show'])->name('books.detail');
     Route::get('/history', [UserController::class, 'history'])->name('history');
 });
 

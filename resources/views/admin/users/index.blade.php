@@ -41,8 +41,8 @@
             <thead>
                 <tr class="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">
                     <th class="px-8 py-6">Profil Pengguna</th>
-                    <th class="px-8 py-6 text-center">Otoritas</th>
-                    <th class="px-8 py-6 text-right">Aksi Kontrol</th>
+                    <th class="px-8 py-6 text-center">Role</th>
+                    <th class="px-8 py-6 text-right">Action</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
