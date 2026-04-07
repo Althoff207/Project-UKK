@@ -68,7 +68,7 @@
                 <div class="absolute top-0 left-0 w-full h-3 bg-indigo-500"></div>
 
                 <div class="text-center mb-10">
-                    <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tighter">Impor Massal (CSV)</h2>
+                    <h2 class="text-2xl font-black text-slate-900 uppercase tracking-tighter">Impor Massal (Excel/CSV)</h2>
                     <p class="text-slate-400 text-xs mt-2 font-medium italic">Upload file data siswa satu angkatan sekaligus.</p>
                 </div>
 
@@ -80,7 +80,7 @@
                             <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-sm group-hover:scale-110 transition-transform">
                                 <svg class="w-8 h-8 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                             </div>
-                            <p id="file-label" class="text-slate-500 font-bold text-sm">Pilih File CSV atau Excel</p>
+                            <p id="file-label" class="text-slate-500 font-bold text-sm">Upload file data siswa (.xlsx, .xls, atau .csv)</p>
                             <p class="text-slate-300 text-[10px] mt-1 font-medium italic uppercase tracking-widest">Maksimal 2MB</p>
                         </div>
                     </div>

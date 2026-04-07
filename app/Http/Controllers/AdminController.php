@@ -8,6 +8,8 @@ use App\Models\Borrow;
 use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use App\Imports\UsersImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminController extends Controller
 {
@@ -20,16 +22,16 @@ class AdminController extends Controller
             'total_sedang_dipinjam' => Borrow::where('status', 'borrowed')->count(),
             'total_kategori' => Category::count(),
         ];
-        
+
         return view('admin.dashboard', compact('data'));
     }
 
     public function index(Request $request)
     {
         $search = $request->search;
-        $users = User::when($search, function($query) use ($search) {
+        $users = User::when($search, function ($query) use ($search) {
             $query->where('name', 'like', "%$search%")
-                  ->orWhere('email', 'like', "%$search%");
+                ->orWhere('email', 'like', "%$search%");
         })->paginate(10);
 
         return view('admin.users.index', compact('users'));
@@ -68,18 +70,18 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required',
-            'email' => 'required|email|unique:users,email,'.$user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
             'role' => 'required'
         ]);
 
         $user->name = $request->name;
         $user->email = $request->email;
         $user->role = $request->role;
-        
-        if($request->password) {
+
+        if ($request->password) {
             $user->password = Hash::make($request->password);
         }
-        
+
         $user->save();
 
         return redirect()->route('admin.users.index')->with('success', 'Data user diperbarui!');
@@ -93,6 +95,15 @@ class AdminController extends Controller
 
     public function import(Request $request)
     {
-        return redirect()->back()->with('success', 'Fitur Impor Massal sedang dalam pengembangan!');
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        try {
+            Excel::import(new UsersImport, $request->file('file'));
+            return redirect()->route('admin.users.index')->with('success', 'Data siswa berhasil diimpor dari Excel!');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Format Excel tidak sesuai. Pastikan header kolom adalah: nama, email, password');
+        }
     }
 }
