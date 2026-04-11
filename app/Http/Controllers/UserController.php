@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use App\Models\Borrow;
 
 class UserController extends Controller
@@ -30,6 +31,35 @@ class UserController extends Controller
         return view('user.dashboard', compact('books', 'categories'));
     }
 
+    public function showChangePassword()
+{
+    // Pastikan pengecekan is_first_login sudah benar
+    if (!auth()->user()->is_first_login) {
+        return redirect()->route('user.dashboard');
+    }
+
+    return view('user.change_password');
+}
+
+// UBAH NAMA METHOD INI agar sesuai dengan web.php (updatePasswordFirstTime)
+public function updatePasswordFirstTime(Request $request)
+{
+    // Validasi input
+    $request->validate([
+        'password' => 'required|min:8|confirmed',
+    ]);
+
+    $user = auth()->user();
+
+    // Update password dan matikan status first_login
+    $user->password = Hash::make($request->password);
+    $user->is_first_login = false;
+    $user->save();
+
+    return redirect()->route('user.dashboard')
+        ->with('success', 'Berhasil! Password baru Anda telah disimpan.');
+}
+
     /**
      * Menampilkan Halaman Detail Buku
      */
@@ -38,7 +68,7 @@ class UserController extends Controller
         // Mencari buku berdasarkan ID beserta kategorinya. 
         // findOrFail otomatis memunculkan error 404 jika ID buku tidak ditemukan.
         $book = Book::with('category')->findOrFail($id);
-        
+
         // Memanggil file detail.blade.php milikmu
         return view('user.detail', compact('book'));
     }
